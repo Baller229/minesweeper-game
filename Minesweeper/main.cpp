@@ -130,7 +130,7 @@ int findMax()
 	if (probabilities.size() != 0)
 	{
 		sortVector();
-		cout << "Mark " << probabilities[0].r << " " << probabilities[0].col << endl;
+		cout << "mark " << probabilities[0].r << " " << probabilities[0].col << endl;
 		return 1;
 	}
 	return 0;
@@ -240,7 +240,7 @@ int analyzeO(int row, int col)
 	{
 		if (GRID[row - 1][col].label == "o")
 		{
-			cout << "STEP " << row - 1 << " " << col << endl;
+			cout << "step " << row - 1 << " " << col << endl;
 			return 1;
 		}
 	}
@@ -250,7 +250,7 @@ int analyzeO(int row, int col)
 	{
 		if (GRID[row + 1][col].label == "o")
 		{
-			cout << "STEP " << row + 1 << " " << col << endl;
+			cout << "step " << row + 1 << " " << col << endl;
 			return 1;
 		}
 	}
@@ -260,7 +260,7 @@ int analyzeO(int row, int col)
 	{
 		if (GRID[row][col - 1].label == "o")
 		{
-			cout << "STEP " << row << " " << col - 1 << endl;
+			cout << "step " << row << " " << col - 1 << endl;
 			return 1;
 		}
 	}
@@ -270,7 +270,7 @@ int analyzeO(int row, int col)
 	{
 		if (GRID[row][col + 1].label == "o")
 		{
-			cout << "STEP " << row << " " << col + 1 << endl;
+			cout << "step " << row << " " << col + 1 << endl;
 			return 1;
 		}
 
@@ -281,7 +281,7 @@ int analyzeO(int row, int col)
 	{
 		if (GRID[row - 1][col - 1].label == "o")
 		{
-			cout << "STEP " << row - 1 << " " << col - 1 << endl;
+			cout << "step " << row - 1 << " " << col - 1 << endl;
 			return 1;
 		}
 	}
@@ -291,7 +291,7 @@ int analyzeO(int row, int col)
 	{
 		if (GRID[row - 1][col + 1].label == "o")
 		{
-			cout << "STEP " << row - 1 << " " << col + 1 << endl;
+			cout << "step " << row - 1 << " " << col + 1 << endl;
 			return 1;
 		}
 	}
@@ -301,7 +301,7 @@ int analyzeO(int row, int col)
 	{
 		if (GRID[row + 1][col - 1].label == "o")
 		{
-			cout << "STEP " << row + 1 << " " << col - 1 << endl;
+			cout << "step " << row + 1 << " " << col - 1 << endl;
 			return 1;
 		}
 	}
@@ -311,7 +311,7 @@ int analyzeO(int row, int col)
 	{
 		if (GRID[row + 1][col + 1].label == "o")
 		{
-			cout << "STEP " << row + 1 << " " << col + 1 << endl;
+			cout << "step " << row + 1 << " " << col + 1 << endl;
 			return 1;
 		}
 	}
@@ -525,7 +525,7 @@ void play()
 {
 	while (CONTINUE_GAME)
 	{
-		int doneMove; //Step = 1 or nothing = 0 
+		int doneMove; //step = 1 or nothing = 0 
 		doneMove = iterateGrid();
 
 		//testPrintGrid();
