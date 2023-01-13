@@ -20,7 +20,6 @@ struct Node
 
 };
 
-
 // =======================================================
 void clearVectorGrid();
 void  gridInput();
@@ -37,7 +36,7 @@ void testPrintGrid();
 int iterateGrid();
 void play();
 vector<vector<Node>> createVectorGrid();
-void loadVectorGrid(int currRow, string row);
+void loadVectorGrid(int noi, int currRow, string row);
 void checkLabels(const string& inputRow);
 void checkArguments(int argc, char* argv[]);
 
@@ -46,6 +45,7 @@ void checkArguments(int argc, char* argv[]);
 int ROWS;
 int COLS;
 int BOMBS;
+int NUMBER_OF_INPUT = 0;
 bool CONTINUE_GAME = 1;
 vector<vector<Node>> GRID;
 vector<Node> probabilities;
@@ -57,14 +57,11 @@ vector<Node> probabilities;
 
 int main(int argc, char* argv[])
 {
-	cout << "*** Minesweeper Bot ***" << endl;
+	//cout << "*** Minesweeper Bot ***" << endl;
 	checkArguments(argc, argv);
 	GRID = createVectorGrid();
 	gridInput();
-	//testPrintGrid();
 	play();
-	//clearVectorGrid();
-	//gridInput();
 
 	return 0;
 }
@@ -86,7 +83,6 @@ void clearVectorGrid()
 			GRID[i][j].probability = 0;
 			GRID[i][j].r = 0;
 			GRID[i][j].col = 0;
-
 		}
 	}
 }
@@ -96,14 +92,16 @@ void clearVectorGrid()
 // =======================================================
 void gridInput()
 {
+	
 	for (int i = 0; i < ROWS; i++)
 	{
 		string input_row;
 		getline(cin, input_row);
 		checkLabels(input_row);
-		loadVectorGrid(i, input_row);
+		loadVectorGrid(NUMBER_OF_INPUT ,i, input_row);
 		//cout << "row:" << input_row << endl;
 	}
+	NUMBER_OF_INPUT++;
 }
 
 // =======================================================
@@ -466,7 +464,7 @@ void checkDigits(const string& arg)
 	isDigit = arg.find_first_not_of("0123456789") == string::npos;
 	if (!(isDigit))
 	{
-		cout << "ERR: nie su to len cisla: " << arg << endl;
+		//cout << "ERR: nie su to len cisla: " << arg << endl;
 		exit(1);
 	}
 }
@@ -530,7 +528,7 @@ void play()
 		int doneMove; //Step = 1 or nothing = 0 
 		doneMove = iterateGrid();
 
-		testPrintGrid();
+		//testPrintGrid();
 
 		if (doneMove == 0)
 		{
@@ -560,10 +558,17 @@ vector<vector<Node>> createVectorGrid()
 // LOAD GRID
 // =======================================================
 
-void loadVectorGrid(int currRow, string row)
+void loadVectorGrid(int noi, int currRow, string row)
 {
 	for (size_t i = 0; i < row.size(); i++)
 	{
+		if (noi == 0)
+		{
+			if (row[i] == 'p')
+			{
+				exit(1);
+			}
+		}
 		GRID[currRow][i].label.push_back(row[i]);
 		GRID[currRow][i].r = currRow;
 		GRID[currRow][i].col = (int) i;
@@ -580,18 +585,18 @@ void checkLabels(const string& inputRow)
 	containsLabels = inputRow.find_first_not_of("op.12345678") == string::npos;
 	if (!(containsLabels))
 	{
-		cout << "ERR: neobsahuje len dane labels: " << inputRow << endl;
+		//cout << "ERR: neobsahuje len dane labels: " << inputRow << endl;
 		exit(1);
 	}
 	if ((int)inputRow.size() != COLS)
 	{
 		if ((int)inputRow.size() == 0)
 		{
-			cout << "KONIEC HRY: " << inputRow.size() << endl;
+			//cout << "KONIEC HRY: " << inputRow.size() << endl;
 			CONTINUE_GAME = 0;
 			exit(0);
 		}
-		cout << "ERR: dlzka vstupneho riadku vacsia ako COLS size: " << inputRow.size() << endl;
+		//cout << "ERR: dlzka vstupneho riadku vacsia ako COLS size: " << inputRow.size() << endl;
 		exit(1);
 	}
 }
@@ -604,7 +609,7 @@ void checkArguments(int argc, char* argv[])
 	// pocet argc musi byt 4
 	if (argc != 4) 
 	{
-		cout << "ERR: pocet argumentov: " << argc << endl;
+		//cout << "ERR: pocet argumentov: " << argc << endl;
 		exit(1);
 	}
 	
@@ -619,17 +624,17 @@ void checkArguments(int argc, char* argv[])
 
 	if (ROWS < 2 || ROWS > 100)
 	{
-		cout << "ERR: pocet riadkov mimo rozsah: " << ROWS << endl;
+		//cout << "ERR: pocet riadkov mimo rozsah: " << ROWS << endl;
 		exit(1);
 	}
 	if (COLS < 2 || COLS > 100)
 	{
-		cout << "ERR: pocet stlpcov mimo rozsah: " << COLS << endl;
+		//cout << "ERR: pocet stlpcov mimo rozsah: " << COLS << endl;
 		exit(1);
 	}
 	if (BOMBS <= 0 || BOMBS >= (ROWS*COLS))
 	{
-		cout << "ERR: pocet bomb mimo rozsah: " << BOMBS << endl;
+		//cout << "ERR: pocet bomb mimo rozsah: " << BOMBS << endl;
 		exit(1);
 	}
 
