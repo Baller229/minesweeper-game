@@ -1,18 +1,45 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include <vector>
+#include <queue>
+
 using namespace std;
+
 
 // =======================================================
 
 struct Node
 {
 	string label;
+	int r = 0;
+	int col = 0;
 	int bombs_around = 0;
 	int max_bombs = 0;
 	int probability = 0;
 
 };
+
+
+// =======================================================
+void clearVectorGrid();
+void  gridInput();
+void sortVector();
+int findMax();
+bool isOutOfGrid(int row, int col);
+void incrementO(int row, int col);
+int analyzeO(int row, int col);
+void analyzeBombs(int row, int col);
+int analyzeNode(int row, int col);
+bool checkDigitsNode(const string& arg);
+void checkDigits(const string& arg);
+void testPrintGrid();
+int iterateGrid();
+void play();
+vector<vector<Node>> createVectorGrid();
+void loadVectorGrid(int currRow, string row);
+void checkLabels(const string& inputRow);
+void checkArguments(int argc, char* argv[]);
 
 // =======================================================
 
@@ -21,22 +48,108 @@ int COLS;
 int BOMBS;
 bool CONTINUE_GAME = 1;
 vector<vector<Node>> GRID;
+vector<Node> probabilities;
+
+
+// =======================================================
+// MAIN
+// =======================================================
+
+int main(int argc, char* argv[])
+{
+	cout << "*** Minesweeper Bot ***" << endl;
+	checkArguments(argc, argv);
+	GRID = createVectorGrid();
+	gridInput();
+	//testPrintGrid();
+	play();
+	//clearVectorGrid();
+	//gridInput();
+
+	return 0;
+}
+
+// =======================================================
+// CLEAR GRID
+// =======================================================
+
+void clearVectorGrid()
+{
+	probabilities.clear();
+	for (int i = 0; i < ROWS; i++)
+	{
+		for (int j = 0; j < COLS; j++)
+		{
+			GRID[i][j].label.pop_back();
+			GRID[i][j].bombs_around = 0;
+			GRID[i][j].max_bombs = 0;
+			GRID[i][j].probability = 0;
+			GRID[i][j].r = 0;
+			GRID[i][j].col = 0;
+
+		}
+	}
+}
+
+// =======================================================
+// STDIN FOR GRID
+// =======================================================
+void gridInput()
+{
+	for (int i = 0; i < ROWS; i++)
+	{
+		string input_row;
+		getline(cin, input_row);
+		checkLabels(input_row);
+		loadVectorGrid(i, input_row);
+		//cout << "row:" << input_row << endl;
+	}
+}
+
+// =======================================================
+// FIND MAX PROBABILITY
+// =======================================================
+void sortVector()
+{
+	sort(probabilities.begin(), probabilities.end(), [](const auto& lhs, const auto& rhs)
+		{
+			return lhs.probability > rhs.probability;
+		});
+}
+
+int findMax()
+{
+	for (size_t i = 0; i < GRID.size(); i++)
+	{
+		for (size_t j = 0; j < GRID[i].size(); j++)
+		{
+			if (GRID[i][j].label == "o")
+			{
+				probabilities.push_back(GRID[i][j]);
+			}
+		}
+	}
+	if (probabilities.size() != 0)
+	{
+		sortVector();
+		cout << "Mark " << probabilities[0].r << " " << probabilities[0].col << endl;
+		return 1;
+	}
+	return 0;
+
+}
 
 // =======================================================
 // Check index out of bounds
 // =======================================================
 bool isOutOfGrid(int row, int col)
 {
-	if (row < 0 || row >= ROWS)
+	if ((row < 0 || row >= ROWS) || (col < 0 || col >= COLS))
 	{
 		return true;
 	}
-	if (col < 0 || row >= COLS)
-	{
-		return true;
-	}
+	
 	return false;
-
 }
 
 // ====================================================================
@@ -109,7 +222,7 @@ void incrementO(int row, int col)
 		}
 	}
 
-	// | UP RIGHT | row + 1 | col + 1|
+	// | DOWN RIGHT | row + 1 | col + 1|
 	if (!(isOutOfGrid(row + 1, col + 1)))
 	{
 		if (GRID[row + 1][col + 1].label == "o")
@@ -361,16 +474,27 @@ void checkDigits(const string& arg)
 // =======================================================
 // ITERATE GRID
 // =======================================================
+
 void testPrintGrid()
 {
+	cout << "*******" << endl;
 	for (size_t i = 0; i < GRID.size(); i++)
 	{
 		for (size_t j = 0; j < GRID[i].size(); j++)
 		{
-			cout << GRID[i][j].label;
+			if (GRID[i][j].label == "o")
+			{
+				cout << GRID[i][j].probability;
+			}
+			else 
+			{
+				cout << GRID[i][j].label;
+			}
+			
 		}
 		cout << endl;
 	}
+	cout << "*******" << endl;
 }
 // =======================================================
 // ITERATE GRID
@@ -405,11 +529,22 @@ void play()
 	{
 		int doneMove; //Step = 1 or nothing = 0 
 		doneMove = iterateGrid();
-	}
-	
 
+		testPrintGrid();
+
+		if (doneMove == 0)
+		{
+			findMax();
+			clearVectorGrid();
+			gridInput();
+		}
+		else 
+		{
+			clearVectorGrid();
+			gridInput();
+		}
+	}	
 }
-
 
 // =======================================================
 // STDIN FOR GRID
@@ -422,25 +557,6 @@ vector<vector<Node>> createVectorGrid()
 }
 
 // =======================================================
-// CLEAR GRID
-// =======================================================
-
-void clearVectorGrid()
-{
-	for (int i = 0; i < ROWS; i++)
-	{
-		for (int j = 0; j < COLS; j++)
-		{
-			GRID[i][j].label.pop_back();
-			GRID[i][j].bombs_around = 0;
-			GRID[i][j].max_bombs = 0;
-			GRID[i][j].probability = 0;
-
-
-		}
-	}
-}
-// =======================================================
 // LOAD GRID
 // =======================================================
 
@@ -449,6 +565,8 @@ void loadVectorGrid(int currRow, string row)
 	for (size_t i = 0; i < row.size(); i++)
 	{
 		GRID[currRow][i].label.push_back(row[i]);
+		GRID[currRow][i].r = currRow;
+		GRID[currRow][i].col = (int) i;
 	}
 }
 
@@ -470,29 +588,11 @@ void checkLabels(const string& inputRow)
 		if ((int)inputRow.size() == 0)
 		{
 			cout << "KONIEC HRY: " << inputRow.size() << endl;
+			CONTINUE_GAME = 0;
 			exit(0);
 		}
 		cout << "ERR: dlzka vstupneho riadku vacsia ako COLS size: " << inputRow.size() << endl;
 		exit(1);
-	}
-}
-
-// =======================================================
-// STDIN FOR GRID
-// =======================================================
-void gridInput()
-{
-	 
-	
-	
-	for (int i = 0; i < ROWS; i++)
-	{
-		string input_row;
-		getline(cin, input_row);
-		checkLabels(input_row);
-		loadVectorGrid(i, input_row);
-		//cout << "row:" << input_row << endl;
-
 	}
 }
 
@@ -533,24 +633,6 @@ void checkArguments(int argc, char* argv[])
 		exit(1);
 	}
 
-}
-
-// =======================================================
-// MAIN
-// =======================================================
-
-int main(int argc, char* argv[])
-{
-	cout << "*** Minesweeper Bot ***" << endl;
-	checkArguments(argc, argv);
-	GRID = createVectorGrid();
-	gridInput(); 
-	//testPrintGrid();
-	play();
-	//clearVectorGrid();
-	//gridInput();
-
-	return 0;
 }
 
 // =======================================================
