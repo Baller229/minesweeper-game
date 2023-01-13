@@ -19,6 +19,7 @@ struct Node
 int ROWS;
 int COLS;
 int BOMBS;
+bool CONTINUE_GAME = 1;
 vector<vector<Node>> GRID;
 
 // =======================================================
@@ -383,7 +384,10 @@ int iterateGrid()
 			string lbl = GRID[i][j].label;
 			if (checkDigitsNode(lbl))
 			{
-				analyzeNode((int)i, (int)j);
+				if (analyzeNode((int)i, (int)j) == 1)
+				{
+					return 1;
+				}
 				//cout << "d: " << lbl << endl;
 			}
 		}
@@ -397,7 +401,13 @@ int iterateGrid()
 
 void play() 
 {
-	iterateGrid();
+	while (CONTINUE_GAME)
+	{
+		int doneMove; //Step = 1 or nothing = 0 
+		doneMove = iterateGrid();
+	}
+	
+
 }
 
 
